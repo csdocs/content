@@ -2,6 +2,7 @@
 require_once 'Session.php';
 require_once 'DataBase.php';
 require_once 'XML.php';
+require_once 'Log.php';
 /**
  * Realiza las conversiones pertinentes de distintos documentos para poder 
  * observar su vista prevía en el visor de imágenes del cliente CSDocs.
@@ -30,6 +31,7 @@ class Viewer {
             switch (filter_input(INPUT_POST, "option"))
             {
                 case 'imageProcessingToConvert': $this->imageProcessingToConvert($userData); break;
+                case 'registerDocumentInLog': $this->registerDocumentInLog($userData); break;
             }
         }
     }
@@ -121,6 +123,14 @@ class Viewer {
         exec($command, $pagesNumber);
         
         return $pagesNumber;
+    }
+    
+    private function registerDocumentInLog($userData){
+        $idUser = $userData['idUser'];
+        $userName = $userData['userName'];
+        $documentName = filter_input(INPUT_POST, "documentName");
+        Log::WriteEvent(46, $idUser, $userName, " $documentName");
+        XML::XMLReponse("registered", 1, "Consulta de documento registrada");
     }
     
 }

@@ -2,6 +2,37 @@
 /* global BotonesWindow, PDFJS, Wvisor, minWvisor, minHvisor, Hvisor */
 var iv1;   /* Objeto que controla el api del visor de imágenes */
 
+var Viewer = function(){
+    /**
+     * @description Se registra la consulta del documento en el log del sistema.
+     * @returns {undefined}
+     */
+    this.registerDocumentInLog = function (documentName) {
+        $.ajax({
+            async: true,
+            cache: false,
+            dataType: "html",
+            type: 'POST',
+            url: "php/Viewer.php",
+            data: {option: "registerDocumentInLog"},
+            success: function (xml) {
+                if ($.parseXML(xml) === null) {
+                    return errorMessage(xml);
+                } else
+                    xml = $.parseXML(xml);
+
+                $(xml).find("Error").each(function (){
+                    var mensaje = $(this).find("Mensaje").text();
+                    errorMessage(mensaje);
+                });
+
+            },
+            error: function (objXMLHttpRequest) {
+                errorMessage(objXMLHttpRequest);
+            }
+        });
+    };
+}
 /******************************************************************************
  * 
  * @param {type} tipo
@@ -259,13 +290,14 @@ function insertMenuToImageViewer(){
 
 function pdfViewer(DocEnvironment){
 //    PDFJS.workerSrc = 'apis/pdf.js-master/src/worker_loader.js';
+    var preview = new Viewer();
     ArrayNotes=new Array();
     PaginaActual=0;
     ArrayObteinNotes=0;
 //            alert(DocumentEnvironment+DocumentEnvironment.FileRoute+tipo+IdGlobal+IdFile+Source);
     DEFAULT_URL = DocEnvironment.FileRoute;
     PDFView.open(DocEnvironment.FileRoute, 0);     
-    
+    preview.registerDocumentInLog(DocEnvironment.FileName)
     if($.type(DocEnvironment)==='object');
         Notes = new ClassNotes('pdfViewer', DocEnvironment.IdRepository, DocEnvironment.RepositoryName, DocEnvironment.IdFile, DocEnvironment.FileName, DocEnvironment.IdGlobal);
 
