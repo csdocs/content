@@ -14,7 +14,7 @@ var Viewer = function(){
             dataType: "html",
             type: 'POST',
             url: "php/Viewer.php",
-            data: {option: "registerDocumentInLog"},
+            data: {option: "registerDocumentInLog",documentName: documentName},
             success: function (xml) {
                 if ($.parseXML(xml) === null) {
                     return errorMessage(xml);

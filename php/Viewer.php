@@ -128,9 +128,10 @@ class Viewer {
     private function registerDocumentInLog($userData){
         $idUser = $userData['idUser'];
         $userName = $userData['userName'];
+        $instanceName = $userData['dataBaseName'];
         $documentName = filter_input(INPUT_POST, "documentName");
-        Log::WriteEvent(46, $idUser, $userName, " $documentName");
-        XML::XMLReponse("registered", 1, "Consulta de documento registrada");
+        $log = Log::WriteEvent(46, $idUser, $userName, " $documentName", $instanceName);
+        XML::XMLReponse("registered", 1, $log);
     }
     
 }

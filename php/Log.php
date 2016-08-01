@@ -69,18 +69,21 @@ class Log {
             mkdir ($Route_Log,0777,true);
         
         if(!$Dictionary = parse_ini_file("../Configuracion/DictionaryLog/Dictionary.ini"))
-            return 0;
+            return "No fue posible abrir el diccionario";
         
         $ClientIp = Log::getRealIP();
         
         if(isset($Dictionary[$key]))
         {
-            $Description = $Dictionary[$key];
+            $Description = $Dictionary[$key].$Extra_Description;
             $date = date("Y-m-d H:i:s");
             $Log = fopen($Route_Log."/Log.ini", "a+");
-            fwrite($Log,"Log[]=$date###$key###$IdUser###$user###$Description$Extra_Description###$ClientIp;".PHP_EOL);
-            fclose($Log);            
-        }        
+            fwrite($Log,"Log[]=$date###$key###$IdUser###$user###$Description###$ClientIp;".PHP_EOL);
+            fclose($Log);      
+            return "<p>Evento: $Description.... Registrado </p>";
+        }    
+        else
+            return "<p>No existe el evento solicitado a registrar en Log</p>";
     }
     
     private function LogQuery()
