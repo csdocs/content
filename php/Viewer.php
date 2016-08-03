@@ -32,6 +32,7 @@ class Viewer {
             {
                 case 'imageProcessingToConvert': $this->imageProcessingToConvert($userData); break;
                 case 'registerDocumentInLog': $this->registerDocumentInLog($userData); break;
+                case 'registerViewerCloseEvent': $this->registerViewerCloseEvent($userData); break;
             }
         }
     }
@@ -131,6 +132,15 @@ class Viewer {
         $instanceName = $userData['dataBaseName'];
         $documentName = filter_input(INPUT_POST, "documentName");
         $log = Log::WriteEvent(46, $idUser, $userName, " $documentName", $instanceName);
+        XML::XMLReponse("registered", 1, $log);
+    }
+    
+    private function registerViewerCloseEvent($userData){
+        $idUser = $userData['idUser'];
+        $userName = $userData['userName'];
+        $instanceName = $userData['dataBaseName'];
+        $documentName = filter_input(INPUT_POST, "documentName");
+        $log = Log::WriteEvent(47, $idUser, $userName, " $documentName", $instanceName);
         XML::XMLReponse("registered", 1, $log);
     }
     

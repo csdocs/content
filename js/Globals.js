@@ -173,7 +173,7 @@ function objetoAjax() {
 
 var GlobalDatePicker = {
 //    defaultDate: "+1w",
-//    dateFormat: 'yy-mm-dd',
+    dateFormat: 'yy-mm-dd',
 //    changeMonth: true,
 //    numberOfMonths: 3,
 //    isRTL: true,

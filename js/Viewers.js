@@ -25,13 +25,37 @@ var Viewer = function(){
                     var mensaje = $(this).find("Mensaje").text();
                     errorMessage(mensaje);
                 });
-
             },
             error: function (objXMLHttpRequest) {
                 errorMessage(objXMLHttpRequest);
             }
         });
     };
+    
+    this.registerViewerCloseEvent = function(documentName){
+        $.ajax({
+            async: true,
+            cache: false,
+            dataType: "html",
+            type: 'POST',
+            url: "php/Viewer.php",
+            data: {option: "registerViewerCloseEvent",documentName: documentName},
+            success: function (xml) {
+                if ($.parseXML(xml) === null) {
+                    return errorMessage(xml);
+                } else
+                    xml = $.parseXML(xml);
+
+                $(xml).find("Error").each(function (){
+                    var mensaje = $(this).find("Mensaje").text();
+                    errorMessage(mensaje);
+                });
+            },
+            error: function (objXMLHttpRequest) {
+                errorMessage(objXMLHttpRequest);
+            }
+        });
+    }
 }
 /******************************************************************************
  * 
@@ -305,6 +329,10 @@ function pdfViewer(DocEnvironment){
         minHeight:minHvisor, title:"Vista Previa", 
         open:function(){
             Notes.registerPagesWithNotes();
+        },
+        close: function(){
+           var viewer = new Viewer();
+           viewer.registerViewerCloseEvent(DocEnvironment.FileName)
         }
     }).dialogExtend(BotonesWindow);
 }
