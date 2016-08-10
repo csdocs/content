@@ -35,6 +35,7 @@ class Fifo {
      --------------------------------------------------------------------------*/
     function StartProcess($KeyProcess)
     {
+        $RoutFile = dirname(getcwd());
         $FifoFile="/volume1/web/Fifo/Fifo.ini";     
         
         if(!file_exists($FifoFile)){echo "No existe el archivo Fifo"; return 0;}        
@@ -52,27 +53,27 @@ class Fifo {
         switch ($TypeProcess)
         {
             case "DeleteDirectory": 
-                $command="php /volume1/web/php/ServiceDeleteDirectory.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
+                $command="php56 /volume1/web/php/ServiceDeleteDirectory.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
                 system($command); 
                 return 1;
                 
             case "RestoreDirectories":
-                $command="php /volume1/web/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini RestoreDir >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
+                $command="php56 $RoutFile/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini RestoreDir >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
                 system($command); 
                 return 1;
                 
             case "RestoreFiles":
-                $command="php /volume1/web/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini RestoreFiles >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
+                $command="php56 $RoutFile/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini RestoreFiles >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
                 system($command); 
                 return 1;
                 
             case "DeleteDirectories":
-                $command="php /volume1/web/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini DeleteDirectories >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
+                $command="php56 $RoutFile/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini DeleteDirectories >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
                 system($command); 
                 return 1;
                 
             case "DeleteFiles":
-                $command="php /volume1/web/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini DeleteFiles >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
+                $command="php56 $RoutFile/php/Trash.php $KeyProcess ".dirname($Path)."/$KeyProcess.ini DeleteFiles >>".dirname($Path)."/$KeyProcess.txt 2>>".dirname($Path)."/$KeyProcess.txt &";
                 system($command); 
                 return 1;
             default: return 0;
