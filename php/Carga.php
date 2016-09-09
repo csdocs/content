@@ -24,12 +24,13 @@
 include_once 'XML.php';
 include_once 'DataBase.php';
 include_once 'DesignerForms.php';
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
 class Carga {
     private $db;
     private $prefix;
+    private $filesPath = "/home/conocer/Escritorio/Carga";
     public function __construct() {
         $this->db = new DataBase();
         $this->prefix = "COL ";
@@ -67,7 +68,8 @@ class Carga {
     private function buildDirectoriesStructure($columnNames, $conocerData){
         $routFile = dirname(getcwd());
         $prefix = $this->prefix;
-        for($cont = 1187; $cont <= 1380; $cont++){
+        
+        for($cont = 2; $cont < count($conocerData); $cont++){
             echo "<pre>";
 //            foreach ($conocerData[$cont] as $key => $value){
 //                echo "<p>$key: $columnNames[$key] = $value || </p>";
@@ -314,19 +316,20 @@ class Carga {
     
     private function moveDocument($conocerData, $fileName, $filePath){
         $prefix = $this->prefix;
+        $serverRout = dirname(getcwd());        
         $consecutivo = $conocerData["$prefix"."7"];
         $disk = $conocerData["$prefix"."9"];
         $originPath = $conocerData["$prefix"."10"];
         $fileNameOnly = pathinfo($conocerData["$prefix"."12"], PATHINFO_FILENAME);
         $originFullPathWithoutExt = $disk."$originPath/$fileNameOnly";
-        $originFullPathWithExt1 = "/volume2/Public/$originFullPathWithoutExt.pdf";
-        $originFullPathWithExt2 = "/volume2/Public/$originFullPathWithoutExt.PDF";
+        $originFullPathWithExt1 = $this->filesPath."/$originFullPathWithoutExt.pdf";
+        $originFullPathWithExt2 = $this->filesPath."/$originFullPathWithoutExt.PDF";
 //        echo "<p>origen: $originFullPathWithExt1</p>";
 //        echo "<p>Preparando para mover documento $fileName</p>";
 //        echo "<p>destino: $filePath</p>";
         
-        if(!file_exists("/volume1/web/".dirname($filePath)))
-            mkdir ("/volume1/web/".dirname($filePath), 0777, true);
+        if(!file_exists("$serverRout/".dirname($filePath)))
+            mkdir ("$serverRout/".dirname($filePath), 0777, true);
         
         if(!file_exists($originFullPathWithExt1)){
             if(!file_exists($originFullPathWithExt2)){
@@ -336,14 +339,14 @@ class Carga {
             }
             else{
                 echo "<p>Moviendo2 documento $originFullPathWithExt2</p>";
-                $filePath = "/volume1/web/".dirname($filePath)."/".$consecutivo."_".  basename($originFullPathWithExt2);
+                $filePath = "$serverRout/".dirname($filePath)."/".$consecutivo."_".  basename($originFullPathWithExt2);
                 echo "<p>Path destino : ".  $filePath."</p>";
                 copy($originFullPathWithExt2, $filePath);
             }
         }
         else{
             echo "<p>Moviendo1 documento $originFullPathWithExt1</p>";
-            $filePath = "/volume1/web/".$filePath.dirname($filePath)."/$consecutivo"."_".  basename($originFullPathWithExt1);
+            $filePath = "$serverRout/".$filePath.dirname($filePath)."/$consecutivo"."_".  basename($originFullPathWithExt1);
             echo "<p>Path destino : ".  $filePath."</p>";
             copy($originFullPathWithExt1, $filePath);
         }
@@ -357,8 +360,8 @@ class Carga {
         $originPath = $conocerData["$prefix"."10"];
         $fileNameOnly = pathinfo($conocerData["$prefix"."12"], PATHINFO_FILENAME);
         $originFullPathWithoutExt = "$disk$originPath/$fileNameOnly";
-        $originFullPathWithExt1 = "/volume2/Public/$originFullPathWithoutExt.pdf";
-        $originFullPathWithExt2 = "/volume2/Public/$originFullPathWithoutExt.PDF";
+        $originFullPathWithExt1 = $this->filesPath."/$originFullPathWithoutExt.pdf";
+        $originFullPathWithExt2 = $this->filesPath."/$originFullPathWithoutExt.PDF";
         
         if(!file_exists($originFullPathWithExt1)){
             if(!file_exists($originFullPathWithExt2))
