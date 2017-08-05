@@ -93,6 +93,19 @@
     
 }
 
+.advance-serarch-word-container{
+    display: inline-block;
+    padding: 2px;
+    margin-right: 3px;
+    margin-top: 3px;
+    border-right: solid 1px #4297d7;
+    border-left: solid 1px #4297d7;
+}
+
+.advance-serarch-word-container button{
+    margin-left: 5px;
+}
+
 .contentDetailTools
 {
     position: absolute;

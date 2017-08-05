@@ -408,7 +408,7 @@ class Repository {
         $IdGroup = $userData['idGroup'];
         $idUser = $userData['idUser'];
         $userName = $userData['userName'];
-
+        
         $query = "SELECT  em.IdEmpresa, re.IdRepositorio, re.NombreRepositorio FROM CSDocs_Repositorios re "
                 . "INNER JOIN RepositoryControl rc ON rc.IdRepositorio = re.IdRepositorio "
                 . "INNER JOIN CSDocs_Empresas em on re.ClaveEmpresa=em.ClaveEmpresa "

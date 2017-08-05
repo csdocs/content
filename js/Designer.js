@@ -38,8 +38,6 @@ function GeStructure(TypeStructure)
                 xml = undefined;
             });
         },
-        beforeSend: function () {
-        },
         error: function (objXMLHttpRequest) {
             errorMessage(objXMLHttpRequest);
         }

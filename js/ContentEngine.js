@@ -14,15 +14,43 @@ $(document).ready(function()
 });
 
 /********************************************************************************
- * Realiza las búsquedas correspondientes en el repositorio seleccionado
+ * Realiza las búsquedas  en el repositorio seleccionado
  * @returns {undefined}
  */
 function EngineSearch()
 {    
     var Search = $.trim($('#form_engine').val());
-    
-    if(!(Search.length > 0))
-        return;
+
+
+    if(!(Search.length > 0)){
+        if($('#advanceSearch').is(":checked") ) {
+            if ($('.advance-serarch-word-container').length === 0) {
+                return;
+            }
+        }else{
+            return;
+        }
+    }
+    else
+        Search = "'"+Search+"'";
+
+    if($('#advanceSearch').is(":checked")){
+        $('.advance-serarch-word-container').each(function(){
+            console.log("buscando");
+            console.log($(this).attr("type"));
+            console.log($(this).attr("word"));
+            if(String($(this).attr("position")) === "begin"){
+                Search+=" '"+$(this).attr("type")+$(this).attr("word")+"'";
+            }
+            else{
+                Search+=" '"+$(this).attr("word")+$(this).attr("type")+"'";
+            }
+
+        });
+    }
+
+    console.log("buscando");
+    console.log(Search);
     
     Loading();
     
@@ -35,20 +63,24 @@ function EngineSearch()
       data: {opcion: "EngineSearch",Search: Search},
       success:  function(xml){
           $('#Loading').dialog('close');
-             if($.parseXML( xml )===null){errorMessage(xml);return 0;}else xml=$.parseXML( xml );
-            $(xml).find("Error").each(function()
-            {
+             if($.parseXML( xml )===null)
+                 return errorMessage(xml);
+             else
+                 xml=$.parseXML( xml );
+
+             $(xml).find("Error").each(function(){
                 var $Instancias=$(this);
                 var estado=$Instancias.find("Estado").text();
                 var mensaje=$Instancias.find("Mensaje").text();
-                errorMessage(mensaje);
-                return;
+                return errorMessage(mensaje);
             });
             SetSearchEngineResult(xml);  /* Se envian los dato para mostrarse en la Tabla de resultados */
             
       },
-      beforeSend:function(){},
-      error:function(objXMLHttpRequest){errorMessage(objXMLHttpRequest);}
+      error:function(objXMLHttpRequest){
+          $('#Loading').dialog('close');
+          errorMessage(objXMLHttpRequest);
+      }
     });
 }
 

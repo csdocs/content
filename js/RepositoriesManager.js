@@ -250,9 +250,8 @@ var ClassRepository = function ()
             url: "php/Repository.php",
             data: {opcion: "getRepositoriesByEnterprise"},
             success: function (response) {
-                repositories = repositories;
+                repositories = response;
             },
-            beforeSend: function () {},
             error: function (jqXHR, textStatus, errorThrown) {
                 errorMessage(textStatus + "<br>" + errorThrown);
             }
