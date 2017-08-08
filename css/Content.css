@@ -608,6 +608,24 @@ background-color:#FFFFFF;
     cursor: pointer;
 }
 
+.pdfContainer{
+    width:80%;
+}
+
+.metadatasContainer{
+    padding-top: 20px;
+    width: 20%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    overflow: auto;
+}
+
+#outerContainer{
+    width:80% !important;
+}
+
 /************************* Tablas dentro de acordeones **************************/
 
 .TableInsideAccordion

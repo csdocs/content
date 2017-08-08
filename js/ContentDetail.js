@@ -5,6 +5,7 @@
 /* global TableContentdT, EnvironmentData, TableEnginedT, Hdetalle, Wdetalle, GlobalDatePicker, WindowConfirmacion, LanguajeDataTable, DownloadTabledT */
 
 TableContentDT = '';
+// noinspection JSAnnotator
 TableContentdT = '';
 $(document).ready(function()
 {
@@ -64,7 +65,6 @@ function GetDetalle(Source, IdGlobal, IdFile)
                     required='class = "FormStandart"';
                                 
                 if(TipoCampo==='Default' || TipoCampo==='default'){disabled='disabled'; required='class = "FormStandart"';}   /* Los campos por default no pueden modificarse */
-//                console.log('campo de usuario '+Campo+' '+type+' '+length);         
 
                 /* Los campos por default del repositorio no son visibles por lo tanto se esconden 
                  * al usuario y se agregan dos filas para no alterar el intercalado de colores de la tabla*/
@@ -154,6 +154,68 @@ function GetDetalle(Source, IdGlobal, IdFile)
     return xml;
 }
 
+function getMetadatas(DocEnvironment) {
+    console.log(DocEnvironment);
+    var metadatas = null;
+    $.ajax({
+        async: false,
+        cache: false,
+        dataType: "html",
+        type: 'POST',
+        url: "php/ContentManagement.php",
+        data: {opcion: "GetDetalle", IdRepositorio: DocEnvironment.IdRepository, NombreRepositorio: DocEnvironment.RepositoryName, IdArchivo: DocEnvironment.IdFile, NombreArchivo: DocEnvironment.FileName},
+        success: function (response) {
+            if ($.parseXML(response) === null)
+                return errorMessage(response);
+
+            metadatas = $.parseXML(response);
+        },
+        error: function(jqXHR, textStatus, errorThrown){errorMessage(textStatus +"<br>"+ errorThrown);}
+    });
+    return metadatas;
+}
+
+function getMetadatasForm(allMetadatas){
+    var container = $('<div>');
+    $(allMetadatas).find("CampoRepositorio").each(function() {
+        var $CampoRepositorio = $(this);
+        var Campo = $CampoRepositorio.find('Campo').text();
+        var Valor = $CampoRepositorio.find('Valor').text();
+        var type = $CampoRepositorio.find('type').text();
+        var TipoCampo = $CampoRepositorio.find('TipoCampo').text();
+        var required = $CampoRepositorio.find('required').text();
+        var length = $CampoRepositorio.find("long").text();
+        var disabled = '';
+        var CampoVisible = $CampoRepositorio.find('CampoVisible').text();
+
+        if(CampoVisible === '1' && String(TipoCampo).toLowerCase() !== "default"){
+            var form = getFieldForm({name: Campo, type: type, value: Valor, required: required});
+            container.append(form);
+        }
+    });
+    return container;
+}
+
+function getFieldForm(fieldObject){
+    var form = $('<div>', {class: "form-group"});
+    var label = $('<label>');
+    var input = $('<input>', {class: "form-control"});
+
+    if(String(fieldObject.value).split(" % ").length > 1){
+        var value = String(fieldObject.value).split(" % ")[1];
+        var name = String(fieldObject.value).split(" % ")[0];
+        label.append(name);
+        input.val(value);
+    }else{
+        label.append(fieldObject.name);
+        input.val(fieldObject.value);
+    }
+
+    form.append(label).append(input);
+
+    return form;
+}
+
 /**
  * @description Llena un Select tipo List (Catálogo).
  * @param {type} repositoryName
@@ -165,10 +227,9 @@ function GetDetalle(Source, IdGlobal, IdFile)
    {
         var catalogManager = new ClassCatalogAdministrator();
         var xml = catalogManager.GetCatalogRecordsInXml(repositoryName, NombreCatalogo,'List');
-//        alert("List"+xml);
         var ArrayStruct=new Array();var cont=0;
-        $(xmlStruct).find("Campo").each(function()
-        {               
+
+        $(xmlStruct).find("Campo").each(function() {
             var $Campo=$(this);
             var tipo=$Campo.find("tipo").text();
             if(tipo.length>0){return;}       /* Tipo del List */    
@@ -486,7 +547,8 @@ function SetSearchResult(IdRepository,xml)
     $('.contentDetail').empty();
     $('.contentDetail').append('<table id="table_DetailResult" class="display hover"></table>');
     $('#table_DetailResult').append('<thead><tr><th>Nombre</th><th>Fecha</th><th>Tipo</th><th>Resumen</th><th>Ver</th><th>Metadatos</th><th>Ruta</th><th></th></tr></thead><tbody></tbody>');
-     TableContentdT = $('#table_DetailResult').dataTable({
+     // noinspection JSAnnotator
+    TableContentdT = $('#table_DetailResult').dataTable({
          oLanguage:LanguajeDataTable, 
          "columns": [null,null,null,null,{ "width": "7%" },{ "width": "16%" },null,null]
      });

@@ -16,7 +16,7 @@ function Preview(tipo, IdGlobal, IdFile,  Source)
     {
         case 'Content':
             
-            DocEnvironment = new ClassDocumentEnvironment(Source, IdGlobal, IdFile);         
+            DocEnvironment = new ClassDocumentEnvironment(Source, IdGlobal, IdFile);
             DocEnvironment.GetProperties();
             break;
             
@@ -27,7 +27,7 @@ function Preview(tipo, IdGlobal, IdFile,  Source)
     }
     
     tipo = String(tipo.toLowerCase());
-    
+
     var supportedImages = getSupportedImages();
     
     if(supportedImages[tipo] !== undefined){
@@ -118,9 +118,9 @@ function imagePreview(DocEnvironment){
         
         
     $('#div_vista_previa').dialog({
-        responsive:true, fluid:true ,width:Wvisor, 
-        height:Hvisor, minWidth:380, minHeight:minHvisor, 
-        title:"Vista Previa", 
+        responsive:true, fluid:true ,width:Wvisor,
+        height:Hvisor, minWidth:380, minHeight:minHvisor,
+        title:"Visor de imágenes",
         closeOnEscape:true,
         resize:function(){
             if($(this).width() <= 400){
@@ -155,27 +155,27 @@ function imagePreview(DocEnvironment){
             iv1 = undefined;
         }
     }).dialogExtend(BotonesWindow);
-                
-/****************   Inicio de API para mostrar las imágenes ********************/                
-                
+
+/****************   Inicio de API para mostrar las imágenes ********************/
+
         iv1 = $("#viewerImageBody").iviewer({
             src: RutaArchivoServer,
             update_on_resize: true,
             zoom_animation: true,
             mousewheel: true,
 //            onDrag: function(ev, coords) { },
-            onZoom: function(ev, coords){ 
-                var zoomPercent = $(this).iviewer("update_status"); 
-                $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%");   
+            onZoom: function(ev, coords){
+                var zoomPercent = $(this).iviewer("update_status");
+                $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%");
             },
             onFinishLoad: function(){
-                var zoomPercent = $(this).iviewer("update_status"); 
+                var zoomPercent = $(this).iviewer("update_status");
                 $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%");
             }
         });
 
         $('#viewerImageBody .iviewer_common').hide();       /* Se esconden iconos ingresados por el api */
-        
+
         setActionToImageViewer();
 
         if($.type(DocEnvironment)==='object'){
@@ -183,7 +183,7 @@ function imagePreview(DocEnvironment){
             Notes.registerPagesWithNotes();
             Notes.HideAndShowNoteIcon();
         }
-            
+
 }
 
 function setActionToImageViewer(){
@@ -192,18 +192,18 @@ function setActionToImageViewer(){
     $("#viewerImageNavBar .liZoomDown").click(function(){ iv1.iviewer('zoom_by', 1); });
     $("#viewerImageNavBar .liZoomUp").click(function(){ iv1.iviewer('zoom_by', -1); });
     $("#viewerImageNavBar .liResizeFull").click(function(){
-        iv1.iviewer('fit'); 
-        var zoomPercent = iv1.iviewer("update_status"); 
-        $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%"); 
+        iv1.iviewer('fit');
+        var zoomPercent = iv1.iviewer("update_status");
+        $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%");
     });
-    
-    var zoomPercent = $(iv1).iviewer("update_status"); 
-    
+
+    var zoomPercent = $(iv1).iviewer("update_status");
+
     $('#viewerImageNavBar input.iviewer_zoom_status').val(zoomPercent+"%");
     $('#viewerImageNavBar .liNotes').click(function(){
         Notes.ShowListOfNotes();
     });
-        
+
 //        $('#viewerImageNavBar .iviewer_zoom_status').click(function(){var zommObject = iv1.iviewer("update_status"); console.log(zommObject);});
 //        $("#orig").click(function(){ iv1.iviewer('set_zoom', 100); });
 //        $("#update").click(function(){ iv1.iviewer('update_container_info'); });
@@ -232,7 +232,7 @@ function insertResponsiveMenuToImageViewer(){
             </div>\n\
         </nav>\n\
     ');
-    
+
 }
 
 /* Menú ampliado */
@@ -254,7 +254,7 @@ function insertMenuToImageViewer(){
             </div>\n\
         </nav>\n\
     ');
-    
+
 }
 
 function pdfViewer(DocEnvironment){
@@ -262,18 +262,32 @@ function pdfViewer(DocEnvironment){
     ArrayNotes=new Array();
     PaginaActual=0;
     ArrayObteinNotes=0;
-//            alert(DocumentEnvironment+DocumentEnvironment.FileRoute+tipo+IdGlobal+IdFile+Source);
     DEFAULT_URL = DocEnvironment.FileRoute;
-    PDFView.open(DocEnvironment.FileRoute, 0);     
-    
+    PDFView.open(DocEnvironment.FileRoute, 0);
+
     if($.type(DocEnvironment)==='object');
         Notes = new ClassNotes('pdfViewer', DocEnvironment.IdRepository, DocEnvironment.RepositoryName, DocEnvironment.IdFile, DocEnvironment.FileName, DocEnvironment.IdGlobal);
 
-    $('#DivPdfViewer').dialog({width:Wvisor, height:Hvisor, minWidth:minWvisor, 
-        minHeight:minHvisor, title:"Vista Previa", 
+    $('#DivPdfViewer').dialog({
+        width:Wvisor,
+        height:Hvisor,
+        minWidth:minWvisor,
+        minHeight:minHvisor,
+        title:"Visor de documentos",
         open:function(){
+            setMetadatas(DocEnvironment);
             Notes.registerPagesWithNotes();
-        }
+        },
     }).dialogExtend(BotonesWindow);
 }
+
+function setMetadatas(DocEnvironment){
+    console.log("setting metadatas");
+    var metdatas = getMetadatas(DocEnvironment);
+    var form = getMetadatasForm(metdatas);
+    console.log(form);
+    $('#metadatasContainer').empty().append(form);
+}
+
+
 
