@@ -614,7 +614,7 @@ background-color:#FFFFFF;
 
 .metadatasContainer{
     padding-top: 20px;
-    width: 20%;
+    width: 50%;
     position: absolute;
     top: 0;
     right: 0;
@@ -623,7 +623,7 @@ background-color:#FFFFFF;
 }
 
 #outerContainer{
-    width:80% !important;
+    width:50% !important;
 }
 
 /************************* Tablas dentro de acordeones **************************/

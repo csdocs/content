@@ -127,7 +127,7 @@ var ContentMnagement = function () {
         var contentTree = $('<div>', {
             id: "contentTreeStructure",
             class: "col-xs-3 col-sm-3 col-md-3 col-lg-3"
-        }).css({"overflow": "auto", 'max-height': $(window).height() - 230}).append('<div id = "contentTree"></div>');
+        }).css({"overflow": "auto", 'max-height': $(window).height()-230}).append('<div id = "contentTree"></div>');
 
         var contentTab = $('<div>', {id: "tabs-1", class: "tab-pane"});
 
@@ -159,7 +159,7 @@ var ContentMnagement = function () {
 
         divCollapsed.append('<ul class="nav navbar-nav navbar-right">\n\
                                         <li id="userPage">\n\
-                                            <a href="#"><i class="icon-user"></i> <input type = "checkbox" id="advanceSearch"> Búsqueda avanzada</a>\n\
+                                            <a href="#@userpage"><i class="icon-user"></i> <input type = "checkbox"> Expediente</a>\n\
                                         </li>\n\
                                     </ul>\n\
                                     <form class="navbar-form">\n\
@@ -178,13 +178,6 @@ var ContentMnagement = function () {
 
         var engineTab = $('<div>', {id: "tabs-2", class: "tab-pane"}).append(nav);
         engineTab.append('<div class="contentDetailEngine col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>');
-        engineTab.append('\
-            <div id="advanceSearchContainer" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"  style="display:none">\n\
-                <div id="controlsAdvanceSearchContainer">\n\
-                        <select id="searchAdvanceFields"></select>\n\
-                </div>\n\
-            </div>\n\
-        ');
 
         contentTabDiv.append(engineTab);
 
@@ -199,12 +192,12 @@ var ContentMnagement = function () {
 
     var _initContentInterface = function () {
         var contentArbol = new ContentArbol();
-        var advancedSearch = new AdvancedSearch();
-        $('#content_management').dialog(WindowContentManagement, {close: function () {
-                $(this).remove();
-            }, resize: function (event, ui) {
 
-            }
+        $('#content_management').dialog(WindowContentManagement, {close: function () {
+            $(this).remove();
+        }, resize: function (event, ui) {
+
+        }
         }).dialogExtend(BotonesWindow);
 
         $('#CM_select_empresas').unbind('change').change(function () {
@@ -301,12 +294,6 @@ var ContentMnagement = function () {
             }
         });
 
-        $('#advanceSearch').unbind("click").on("click", function () {
-             ($(this).is(':checked')) ?  advancedSearch.show() : advancedSearch.hide();
-        });
-        
-        advancedSearch.init();
-
     };
 
 };
@@ -327,5 +314,3 @@ function CleaningContent()
 
     $('.contentDetail').empty();
 }
-
-

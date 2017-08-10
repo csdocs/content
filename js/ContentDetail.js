@@ -190,7 +190,9 @@ function getMetadatasForm(allMetadatas){
 
         if(CampoVisible === '1' && String(TipoCampo).toLowerCase() !== "default"){
             var form = getFieldForm({name: Campo, type: type, value: Valor, required: required});
-            container.append(form);
+
+            if(form !== null)
+                container.append(form);
         }
     });
     return container;
@@ -207,6 +209,9 @@ function getFieldForm(fieldObject){
         label.append(name);
         input.val(value);
     }else{
+        if(!fieldObject.value.length > 0)
+            return null;
+
         label.append(fieldObject.name);
         input.val(fieldObject.value);
     }
