@@ -1474,12 +1474,34 @@ class ContentManagement {
     private function EngineSearch($userData)
     {          
         $Search = filter_input(INPUT_POST, "Search");
+        $subqueryString = filter_input(INPUT_POST, "subquery");
         $DataBaseName = $userData['dataBaseName'];
         $NombreUsuario = $userData['userName'];
         $IdUsuario = $userData['idUser'];
         $IdGroup = $userData['idGroup'];
-        
-        $ConsultaBusqueda = "SELECT * FROM RepositorioGlobal rg INNER JOIN RepositoryControl rc ON rg.IdRepositorio = rc.IdRepositorio WHERE MATCH (rg.Full) AGAINST ($Search IN BOOLEAN MODE) AND rc.IdGrupo = $IdGroup";
+        $repositoryName = filter_input(INPUT_POST, "repositoryName");
+        $idRepository = filter_input(INPUT_POST, "idRepository");
+        $subqueryCollection = explode("||", $subqueryString);
+
+
+        if(strlen($subqueryString) == 0)
+            $ConsultaBusqueda = "SELECT * FROM RepositorioGlobal rg INNER JOIN RepositoryControl rc ON rg.IdRepositorio = rc.IdRepositorio WHERE MATCH (rg.Full) AGAINST ($Search IN BOOLEAN MODE) AND rc.IdGrupo = $IdGroup";
+        else{
+            $subquery = "";
+            foreach ($subqueryCollection as $sub){
+                if(strlen($sub) > 0){
+                    $subquery .= " ". $sub." AND";
+                }
+            }
+
+            $subquery = trim($subquery, "AND");
+
+            if(strlen($Search) > 0)
+                $ConsultaBusqueda = "SELECT * FROM RepositorioGlobal rg INNER JOIN $repositoryName rep ON rg.idRepositorio = rep.IdRepositorio INNER JOIN RepositoryControl rc ON rg.IdRepositorio = rc.IdRepositorio WHERE MATCH (rg.Full) AGAINST ($Search IN BOOLEAN MODE) AND rc.IdGrupo = $IdGroup";
+            else
+                $ConsultaBusqueda = "SELECT * FROM RepositorioGlobal rg INNER JOIN $repositoryName rep ON rg.idRepositorio = rep.IdRepositorio INNER JOIN RepositoryControl rc ON rg.IdRepositorio = rc.IdRepositorio WHERE $subquery AND rc.IdGrupo = $IdGroup";
+        }
+
 
         $Resultado = $this->db->ConsultaSelect($DataBaseName, $ConsultaBusqueda);        
 

@@ -15,6 +15,8 @@
  */
 
 var AdvancedSearch = function () {
+    var searchType = "logic";
+
     this.init = function () {
         console.log("init Advance Search");
         setControls();
@@ -24,7 +26,7 @@ var AdvancedSearch = function () {
     var setControls = function(){
         var container = $('<div>', {class: "col-xs-12 col-sm-12 col-md-12 col-lg-12"});
         var optionControls = searchOptionControls(container);
-        
+
         container.append(optionControls);
         
         $('#controlsAdvanceSearchContainer').append(container);
@@ -34,29 +36,59 @@ var AdvancedSearch = function () {
         var formInline = $('<div>', {class: "form-inline"});
         var label = $('<label>').append("Filtro");
         var select = $('<select>', {class: "form-control", id: "advanceSarchOptions"});
-        var formGroup = $('<div>', {class: "form-group"}).append(label).append(select);
-        var textForm = $('<input>', {class: "form-control", id: "AdvancedSearchWord", placeholder: "Bucar..."});
+        var formGroup = $('<div>', {class: "form-group"});
+        var textForm = $('<input>', {class: "form-control", id: "AdvancedSearchWord", placeholder: "Buscar..."});
         var button = $('<button>', {class: "btn btn-primary", id: ""}).append('<span class = "glyphicon glyphicon-plus" />');
 
-        setSearchOptions(select);
+        formGroup.append(label).append(select);
         formInline.append(formGroup);
         container.append(formInline);
 
-        formGroup = $('<div>', {class: "form-group"});
-        formGroup.append(textForm);
-        formGroup.append(button);
+        formGroup = $('<div>', {class: "form-group", id: "logicOperatorsContainer"});
+        formGroup.append(textForm).append(button);
         formInline.append(formGroup);
-        container.append(formInline);
+
+        setSearchOptions(select);
 
         button.on("click", addWordAdvanceSearch);
 
         textForm.keydown(function (event) {
-            console.log("keydown");
             if (event.which === 13)
                 addWordAdvanceSearch();
         });
 
+        addDateForm(formInline);
     };
+
+    /**
+     * @description function for searching data betwen dates
+     */
+    var addDateForm = function(containerSearch){
+        var formGroup = $('<div>', {class: "form-group dateFormContainer"}).css({"display": "none"});
+        var startDate = $('<input>', {class: "form-control", id: "startDate", placeholder: "Fecha inicio", readOnly: true}).css({"cursor": "pointer"});
+        var endDate = $('<input>', {class: "form-control", id: "endDate", placeholder: "Fecha fin", readOnly: true}).css({"cursor": "pointer"});
+        var dateButton = $('<button>', {class: "btn btn-primary", id: ""}).append('<span class = "glyphicon glyphicon-plus" />');
+
+        formGroup.append(startDate);
+        formGroup.append(endDate);
+        formGroup.append(dateButton);
+        containerSearch.append(formGroup);
+
+        endDate.datepicker({dateFormat: 'yy-mm-dd',});
+        startDate.datepicker({dateFormat: 'yy-mm-dd',});
+
+        dateButton.on("click", addWordAdvanceSearch);
+
+        startDate.keydown(function (event) {
+            if (event.which === 13)
+                addWordAdvanceSearch();
+        });
+
+        endDate.keydown(function (event) {
+            if (event.which === 13)
+                addWordAdvanceSearch();
+        });
+    }
     
     var getLogicOperator = function(){
         return [
@@ -80,6 +112,28 @@ var AdvancedSearch = function () {
                 , idRepository: this.idRepository,  word: this.name}).append(this.name + " ("+this.repositoryName+")");
             select.append(option);
         });
+
+        select.on("change", function(){
+            checkOperator($(this));
+        });
+    }
+
+    /**
+     *  On change select form of logic operator
+     */
+    var checkOperator = function(select){
+        var field = $(select).find(":selected");
+        if(String($(field).attr("type")) == "date"){
+            searchType = "date";
+            $('.dateFormContainer').show();
+            $('#logicOperatorsContainer').hide();
+        }
+        else{
+            searchType = "logic";
+            $('.dateFormContainer').hide();
+            $('#logicOperatorsContainer').show();
+        }
+
     }
 
     var getDateFieldsByRepository = function(){
@@ -126,10 +180,47 @@ var AdvancedSearch = function () {
         $('#controlsAdvanceSearchContainer').append(table);
     }
 
-    var addWordAdvanceSearch = function(){
-        var word = $('#advanceSarchOptions :selected').attr("word") + " " +  $('#AdvancedSearchWord').val();
-        var container = $('<div>', {class: "advance-serarch-word-container", type: $('#advanceSarchOptions').val(), position: $('#advanceSarchOptions :selected').attr("position"), word: $('#AdvancedSearchWord').val()});
+    var addWordAdvanceSearch = function() {
+        var word = null;
+        var container = null;
         var buttonRemove = $('<button>', {class: "btn btn-danger"}).append("<span class = 'glyphicon glyphicon-remove'/>");
+
+        if (String(searchType) == "logic") {
+            word = $('#advanceSarchOptions :selected').attr("word") + " " + $('#AdvancedSearchWord').val();
+            container = $('<div>', {class: "advance-serarch-word-container", searchType: searchType, type: $('#advanceSarchOptions').val(), position: $('#advanceSarchOptions :selected').attr("position"), word: $('#AdvancedSearchWord').val()});
+
+            $('#AdvancedSearchWord').val('');
+        }
+        else{
+            var startDate = $.trim($('#startDate').val());
+            var endDate = $.trim($('#endDate').val());
+            var fieldName = $('#advanceSarchOptions :selected').attr("value");
+            var idRepository = $('#advanceSarchOptions :selected').attr("idRepository");
+            var repositoryName = $('#advanceSarchOptions :selected').attr("repositoryName");
+            var separator = "";
+            var dateOperator = null;
+
+            if(isTheSameRepository() == 0)
+                return 0;
+
+            if(startDate.length > 0  & endDate.length > 0) {
+                word = startDate + " entre " + endDate;
+                dateOperator = "between";
+            }
+            if(startDate.length > 0 & endDate.length == 0) {
+                word = " desde " + startDate;
+                dateOperator = ">=";
+            }
+            if(startDate.length == 0 & endDate.length > 0) {
+                word = " hasta " + startDate;
+                dateOperator = "<=";
+            }
+
+            $('#startDate').val("");
+            $('#endDate').val("");
+
+            container = $('<div>', {class: "advance-serarch-word-container", idRepository: idRepository, repositoryName: repositoryName, fieldName: fieldName, dateOperator:dateOperator, searchType: searchType, startDate: startDate, endDate: endDate});
+        }
 
         container.append(word).append(buttonRemove);
 
@@ -138,8 +229,18 @@ var AdvancedSearch = function () {
         });
 
         $('#SearcherWordsTable').append(container);
+    }
 
-        $('#AdvancedSearchWord').val('');
+    var isTheSameRepository = function(idRepository){
+        $('.advance-serarch-word-container').each(function(){
+            var searchtype = $(this).attr("searchType");
+            if(String(searchtype) == "date"){
+                if(String($(this).attr("idRepository")) != idRepository)
+                    return 0
+            }
+        });
+
+        return 1;
     }
     
     var getRepositoriesByCompany = function(){

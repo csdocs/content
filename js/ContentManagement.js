@@ -240,8 +240,11 @@ var ContentMnagement = function () {
         });
 
         $('#form_engine').unbind('keydown').keydown(function (event) {
-            if (event.which === 13)
+
+            if (event.which === 13) {
+                event.preventDefault();
                 EngineSearch();
+            }
         });
 
         $('#button-search').on("click", EngineSearch);

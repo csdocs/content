@@ -20,37 +20,41 @@ $(document).ready(function()
 function EngineSearch()
 {    
     var Search = $.trim($('#form_engine').val());
+    var subquery = "";
+    var repositoryName = null;
+    var idRepository = 0;
 
-
-    if(!(Search.length > 0)){
-        if($('#advanceSearch').is(":checked") ) {
-            if ($('.advance-serarch-word-container').length === 0) {
-                return;
-            }
-        }else{
-            return;
-        }
-    }
-    else
+    if((Search.length > 0))
         Search = "'"+Search+"'";
 
     if($('#advanceSearch').is(":checked")){
         $('.advance-serarch-word-container').each(function(){
-            console.log("buscando");
-            console.log($(this).attr("type"));
-            console.log($(this).attr("word"));
-            if(String($(this).attr("position")) === "begin"){
-                Search+=" '"+$(this).attr("type")+$(this).attr("word")+"'";
+            var searchType = $(this).attr("searchType");
+            console.log(searchType);
+            if(String(searchType) == "logic") {
+                if (String($(this).attr("position")) === "begin")
+                    Search += " '" + $(this).attr("type") + $(this).attr("word") + "'";
+                else
+                    Search += " '" + $(this).attr("word") + $(this).attr("type") + "'";
             }
-            else{
-                Search+=" '"+$(this).attr("word")+$(this).attr("type")+"'";
+            else if(String(searchType) == "date"){
+                var dateOperator = $(this).attr("dateOperator");
+                var fieldName =  $(this).attr("fieldName");
+                var startDate = $(this).attr("startDate");
+                var endDate = $(this).attr("endDate");
+                repositoryName = $(this).attr("repositoryName");
+                idRepository = $(this).attr("idRepository");
+                subquery+= fieldName + " " + dateOperator + " " + ((String(dateOperator) == "between") ? ("'"+startDate+"'" + " and " + "'"+endDate+"'") : (String(startDate).length > 0) ? "'"+startDate+"'" : "'"+endDate+"'")+"||";
             }
-
         });
     }
 
     console.log("buscando");
+    console.log(subquery);
     console.log(Search);
+
+    if(Search.length == 0 & subquery.length == 0)
+        return;
     
     Loading();
     
@@ -60,7 +64,7 @@ function EngineSearch()
       dataType:"html", 
       type: 'POST',   
       url: "php/ContentManagement.php",
-      data: {opcion: "EngineSearch",Search: Search},
+      data: {opcion: "EngineSearch",Search: Search, subquery: subquery, idRepository:idRepository, repositoryName: repositoryName},
       success:  function(xml){
           $('#Loading').dialog('close');
              if($.parseXML( xml )===null)

@@ -5,6 +5,7 @@
 /* global TableContentdT, EnvironmentData, TableEnginedT, Hdetalle, Wdetalle, GlobalDatePicker, WindowConfirmacion, LanguajeDataTable, DownloadTabledT */
 
 TableContentDT = '';
+// noinspection JSAnnotator
 TableContentdT = '';
 $(document).ready(function()
 {
@@ -486,7 +487,8 @@ function SetSearchResult(IdRepository,xml)
     $('.contentDetail').empty();
     $('.contentDetail').append('<table id="table_DetailResult" class="display hover"></table>');
     $('#table_DetailResult').append('<thead><tr><th>Nombre</th><th>Fecha</th><th>Tipo</th><th>Resumen</th><th>Ver</th><th>Metadatos</th><th>Ruta</th><th></th></tr></thead><tbody></tbody>');
-     TableContentdT = $('#table_DetailResult').dataTable({
+     // noinspection JSAnnotator
+    TableContentdT = $('#table_DetailResult').dataTable({
          oLanguage:LanguajeDataTable, 
          "columns": [null,null,null,null,{ "width": "7%" },{ "width": "16%" },null,null]
      });
