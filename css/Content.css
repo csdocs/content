@@ -15,6 +15,9 @@
 
 */
 
+.ui-datepicker-title{
+    color: #2e6e9e !important;
+}
 
 .no-close .ui-dialog-titlebar-close {display: none }
 
